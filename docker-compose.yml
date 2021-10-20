@@ -1,0 +1,45 @@
+version: "3.0"
+services:
+  tedge-mapper:
+   build: ./tedge-Mapper
+   #hostname: tedge-mapper
+   network_mode: host
+   container_name: tedge-mapper
+   deploy:
+      restart_policy:
+         condition: on-failure
+  mosquitto:
+   build: ./Mosquitto
+   #hostname: mosquitto
+   network_mode: host
+   container_name: mosquitto
+   volumes:
+      - ./Mosquitto:/etc/tedge/mosquitto-conf/
+   expose:
+      - "1883"
+      - "9001"
+   #ports:
+   #   - "1883:1883"
+   #   - "9001:9001"
+   #networks:
+   #  - default
+   deploy:
+      restart_policy:
+        condition: on-failure
+  node-red:
+   image: nodered/node-red:latest
+   #hostname: node-red
+   network_mode: host
+   container_name: node-red
+   environment:
+      - TZ=Europe/Amsterdam
+   expose:
+      - "1880"
+   #ports:
+   #   - "1880:1880"
+   user: root:root
+   volumes:
+      - ./node-red/data:/data
+   deploy:
+      restart_policy:
+        condition: on-failure
